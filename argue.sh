@@ -7,7 +7,6 @@ argue() {
   local arg
   local temp_args
   local temp_opts
-  local temp_raw
   local option_forms=("$@")
   
   # expand "-zxvf" to "-z -x -v -f"
@@ -53,8 +52,6 @@ __argue_extract() {
     if [ -n "$capture" ]
     then
       temp_opts["$f"]="$arg"
-      temp_raw[((r++))]="$capture"
-      temp_raw[((r++))]="$arg"
       unset capture
       
     # check for options
@@ -99,7 +96,6 @@ __argue_capture_option() {
     if [ "${forms: -1}" != "+" ]
     then
       temp_opts["$f"]="$capture"
-      temp_raw[((r++))]="$capture"
       unset capture
     fi
     unset arg
@@ -116,23 +112,12 @@ __argue_capture_argument() {
     then
       temp_args[((a++))]="$arg"
     else
-      temp_raw[((r++))]="$arg"
       echo "unrecognized option: $arg" >&2
     fi
   fi
 }
 
 __argue_export() {
-  local i=0
-  local temp
-  for arg in "${temp_args[@]}"
-  do
-    raw[((i++))]="$arg"
-  done
-  for arg in "${temp_raw[@]}"
-  do
-    raw[((i++))]="$arg"
-  done
   args=("${temp_args[@]}")
   opts=("${temp_opts[@]}")
 }
