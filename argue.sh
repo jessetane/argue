@@ -112,7 +112,7 @@ __argue_capture_argument() {
     then
       temp_args[((a++))]="$arg"
     else
-      echo "unrecognized option: $arg" >&2
+      echo "unrecognized option: $arg" >&2 && return 1
     fi
   fi
 }
