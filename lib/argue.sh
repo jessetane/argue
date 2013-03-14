@@ -1,22 +1,23 @@
 #!/usr/bin/env bash
 # 
-# argue.sh
+# argue
 #
 
 argue() {
+  opts=() # ensure bash array is properly initialized
   local arg
-  local temp_args
-  local temp_opts
+  local expanded=()
+  local positional=()
   local option_forms=("$@")
   
-  # expand "-zxvf" to "-z -x -v -f"
+  # expand "-zxvf" style options to "-z -x -v -f"
   __argue_expand
   
-  # extract to temporary structures
+  # extract options and positional arguments
   __argue_extract || return 1
   
-  # export temporary data
-  __argue_export
+  # export positional args
+  args=("${positional[@]}")
 }
 
 __argue_expand() {
@@ -28,33 +29,31 @@ __argue_expand() {
     then
       for ((i=1; i<${#arg}; i++))
       do
-        temp_args[((a++))]="-${arg:i:1}"
+        expanded[((a++))]="-${arg:i:1}"
       done
     else
-      temp_args[((a++))]="$arg"
+      expanded[((a++))]="$arg"
     fi
   done
-  args=("${temp_args[@]}")
 }
 
 __argue_extract() {
-  unset temp_args
   local f
   local r=0
   local a=0
   local forms
   local capture
-  for arg in "${args[@]}"
+  for arg in "${expanded[@]}"
   do
     
     # if the capture flag is set the
     # next arg is an option value
     if [ -n "$capture" ]
     then
-      temp_opts["$f"]="$arg"
+      opts["$f"]="$arg"
       unset capture
       
-    # check for options
+    # is $arg is an option or simply a positional argument?
     else
       f=0
       for forms in "${option_forms[@]}"
@@ -67,9 +66,9 @@ __argue_extract() {
         __argue_capture_option
       done
       
-      # if the arg didn't match an option form 
-      # and it's not unrecognized, capture it
-      __argue_capture_argument || return 1
+      # if we still have $arg here it's either an 
+      # unrecognized option or a positional argument
+      __argue_capture_positional || return 1
     fi
   done
 }
@@ -95,7 +94,7 @@ __argue_capture_option() {
   then
     if [ "${forms: -1}" != "+" ]
     then
-      temp_opts["$f"]="$capture"
+      opts["$f"]="$capture"
       unset capture
     fi
     unset arg
@@ -105,19 +104,15 @@ __argue_capture_option() {
   fi
 }
 
-__argue_capture_argument() {
+__argue_capture_positional() {
   if [ -n "$arg" ]
   then
     if [ "${arg:0:1}" != "-" ]
     then
-      temp_args[((a++))]="$arg"
-    else
+      positional[((a++))]="$arg"
+    elif [ "${#option_forms[@]}" != 0 ]
+    then
       echo "unrecognized option: $arg" >&2 && return 1
     fi
   fi
-}
-
-__argue_export() {
-  args=("${temp_args[@]}")
-  opts=("${temp_opts[@]}")
 }
