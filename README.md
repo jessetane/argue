@@ -1,11 +1,11 @@
 # argue
-An argument and option parser for bash
+An argument and option parser for bash.
 
 ## Why
-`getopts` is somewhat limited
+Too lazy to use `getopt(s)`.
 
 ## How
-Sourceable bash script
+Sourceable bash script.
 
 ## Usage
 * Make an array variable called `args` to store the arguments you'd like to parse
@@ -13,11 +13,11 @@ Sourceable bash script
 * Make the last form of an option a `+` to capture the next positional argument as an option value
 * After `argue` runs, positional arguments end up in the `$args` array variable, options in `$opts`
 
-```
+```bash
 args=("$@")
 argue "-v, --version"\
-			"-h, --help"\
-			"-n, --name, +"
+      "-h, --help"\
+      "-n, --name, +"
 ```
 
 ## Inspiration
