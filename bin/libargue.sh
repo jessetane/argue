@@ -51,7 +51,7 @@ argue_extract() {
     if [ -n "$capture" ]
     then
       opts["$f"]="$arg"
-      unset capture
+      capture=""
       
     # is $arg is an option or simply a positional argument?
     else
@@ -74,7 +74,7 @@ argue_extract() {
 }
 
 argue_detect_option() {
-  unset capture
+  capture=""
   local form
   local OIFS="$IFS"
   IFS=", "
@@ -95,9 +95,9 @@ argue_capture_option() {
     if [ "${forms: -1}" != "+" ]
     then
       opts["$f"]="$capture"
-      unset capture
+      capture=""
     fi
-    unset arg
+    arg=""
     break
   else
     ((f++))
