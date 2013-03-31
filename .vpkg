@@ -8,23 +8,23 @@ name() {
 }
 
 version() {
-  echo "0.0.3"
+  echo "0.0.4"
 }
 
 repository() {
   echo "https://github.com/jessetane/argue"
 }
 
-build() {
-  
-  # get source
-  [ ! -d "$src"/.git ] && git clone "$(repository)" "$src"
-  
-  # checkout code
+fetch() {
+  git clone "$(repository)" "$src"
+}
+
+update() {
   git fetch --all
   git fetch --tags
-  
-  # install
+}
+
+build() {
   mkdir -p "$lib"/"$build"
   cd "$lib"/"$build"
   cp -R "$src"/.git ./
