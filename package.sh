@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# .vpkg for argue
+# package.sh for argue
 #
 
 name() {
@@ -8,7 +8,7 @@ name() {
 }
 
 version() {
-  echo "0.0.4"
+  echo "0.0.5"
 }
 
 repository() {
