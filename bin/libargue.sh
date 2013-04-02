@@ -11,16 +11,16 @@ argue() {
   local option_forms=("$@")
   
   # expand "-zxvf" style options to "-z -x -v -f"
-  argue_expand
+  __argue_expand
   
   # extract options and positional arguments
-  argue_extract || return 1
+  __argue_extract || return 1
   
   # export positional args
   args=("${positional[@]}")
 }
 
-argue_expand() {
+__argue_expand() {
   local i
   local a=0
   for arg in "${args[@]}"
@@ -37,7 +37,7 @@ argue_expand() {
   done
 }
 
-argue_extract() {
+__argue_extract() {
   local f
   local r=0
   local a=0
@@ -60,20 +60,20 @@ argue_extract() {
       do
         
         # check arg against each option form
-        argue_detect_option
+        __argue_detect_option
         
         # if the arg matches a form capture it
-        argue_capture_option
+        __argue_capture_option
       done
       
       # if we still have $arg here it's either an 
       # unrecognized option or a positional argument
-      argue_capture_positional || return 1
+      __argue_capture_positional || return 1
     fi
   done
 }
 
-argue_detect_option() {
+__argue_detect_option() {
   capture=""
   local form
   local OIFS="$IFS"
@@ -89,7 +89,7 @@ argue_detect_option() {
   IFS="$OIFS"
 }
 
-argue_capture_option() {
+__argue_capture_option() {
   if [ -n "$capture" ]
   then
     if [ "${forms: -1}" != "+" ]
@@ -104,7 +104,7 @@ argue_capture_option() {
   fi
 }
 
-argue_capture_positional() {
+__argue_capture_positional() {
   if [ -n "$arg" ]
   then
     if [ "${arg:0:1}" != "-" ]
