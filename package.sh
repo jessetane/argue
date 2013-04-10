@@ -16,17 +16,18 @@ repository() {
 }
 
 fetch() {
-  git clone "$(repository)" "$src"
+  git clone "$(repository)" "$SRC"
 }
 
 update() {
+  cd "$SRC"
   git fetch --all
   git fetch --tags
 }
 
 build() {
-  mkdir -p "$lib"/"$build"
-  cd "$lib"/"$build"
-  cp -R "$src"/.git ./
-  git reset --hard "$version"
+  mkdir -p "$LIB"
+  cp -R "$SRC"/.git "$LIB"/
+  cd "$LIB"
+  git reset --hard "$VERSION"
 }
