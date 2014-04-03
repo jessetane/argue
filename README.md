@@ -31,5 +31,5 @@ echo "arguments: ${args[@]}"    # access positional args in the $args array
 ## inspiration
 loosely by [commander.c](https://github.com/visionmedia/commander.c)
 
-## License
+## license
 WTFPL
