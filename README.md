@@ -1,27 +1,35 @@
-# argue
-An argument and option parser for bash.
+# argue.sh
+an argument and option parser for bash
 
-## Why
-Too lazy to use `getopt(s)`.
+## why
+`getopt(s)` doesn't do --long-form-args
 
-## How
-Sourceable bash script.
+## how
+sourceable shell script
 
-## Usage
-* Make an array variable called `args` to store the arguments you'd like to parse
-* Call `argue` with comma delimited strings representing accepted option formats as arguments
-* Make the last form of an option a `+` to capture the next positional argument as an option value
-* After `argue` runs, positional arguments end up in the `$args` array variable, options in `$opts`
+## install
+get `argue.sh` somewhere in your `PATH`
 
+## example
 ```bash
-args=("$@")
-argue "-v, --version"\
-      "-h, --help"\
-      "-n, --name, +"
+#!/bin/bash
+#
+# argue-example
+#
+
+. argue.sh
+
+argue "$*"\                     # first pass argv to argue
+      "-v, --version"\          # specify options with comma separated lists of forms
+      "-f, --first-name, +"\    # specify options that capture a value by making the last form a "+"
+      "-l, --last-name, +"
+
+echo "options: ${opts[@]}"      # access options in the $opts array
+echo "arguments: ${args[@]}"    # access positional args in the $args array
 ```
 
-## Inspiration
-Loosely by [commander.c](https://github.com/visionmedia/commander.c)
+## inspiration
+loosely by [commander.c](https://github.com/visionmedia/commander.c)
 
 ## License
-[WTFPL](http://www.wtfpl.net/txt/copying/)
+WTFPL

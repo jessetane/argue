@@ -1,0 +1,5 @@
+{
+  "name": "argue.sh",
+  "description": "an argument and option parser for bash",
+  "version": "1.0.0"
+}

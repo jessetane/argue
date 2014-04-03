@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# program
+#
+
+__dirname="$(cd "$(dirname "$BASH_SOURCE")"/.. && pwd)"
+
+. "$__dirname"/bin/argue.sh
+
+argue "$*"\
+      "-v, --version"\
+      "-f, --first-name, +"\
+      "-l, --last-name, +"
+
+echo "options: ${opts[@]}"
+echo "arguments: ${args[@]}"

@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
 # 
-# argue
+# argue.sh
 #
 
 argue() {
-  opts=() # ensure bash array is properly initialized
-  local arg
+  local argv=("$@")
   local expanded=()
   local positional=()
-  local option_forms=("$@")
+  local option_forms=("${argv[@]:1}")
+  
+  args=(${argv[0]})
+  opts=() # ensure bash array is properly initialized
   
   # expand "-zxvf" style options to "-z -x -v -f"
   __argue_expand
@@ -22,17 +24,25 @@ argue() {
 
 __argue_expand() {
   local i
+  local arg
   local a=0
-  for arg in "${args[@]}"
-  do
-    if echo "$arg" | grep -q "^-[^-]"
-    then
-      for ((i=1; i<${#arg}; i++))
-      do
+  local val
+  for arg in "${args[@]}"; do
+    if echo "$arg" | grep -q "="; then
+      val="$(echo "$arg" | sed 's/[^=]*=//')"
+      arg="$(echo "$arg" | sed 's/=.*//')"
+    else
+      val=""
+    fi
+    if echo "$arg" | grep -q "^-[^-]"; then
+      for ((i=1; i<${#arg}; i++)); do
         expanded[((a++))]="-${arg:i:1}"
       done
     else
       expanded[((a++))]="$arg"
+    fi
+    if [ -n "$val" ]; then
+      expanded[((a++))]="$val"
     fi
   done
 }
@@ -41,23 +51,21 @@ __argue_extract() {
   local f
   local r=0
   local a=0
+  local arg
   local forms
   local capture
-  for arg in "${expanded[@]}"
-  do
+  for arg in "${expanded[@]}"; do
     
     # if the capture flag is set the
     # next arg is an option value
-    if [ -n "$capture" ]
-    then
+    if [ -n "$capture" ]; then
       opts["$f"]="$arg"
       capture=""
       
     # is $arg is an option or simply a positional argument?
     else
       f=0
-      for forms in "${option_forms[@]}"
-      do
+      for forms in "${option_forms[@]}"; do
         
         # check arg against each option form
         __argue_detect_option
@@ -78,10 +86,9 @@ __argue_detect_option() {
   local form
   local OIFS="$IFS"
   IFS=", "
-  for form in $forms
-  do
-    if [ "$arg" = "$form" ]
-    then
+  for form in $forms; do
+    if [ "$arg" = "$form" ] &&
+       [ "$arg" != "+" ]; then
       capture="$arg"
       break
     fi
@@ -90,10 +97,8 @@ __argue_detect_option() {
 }
 
 __argue_capture_option() {
-  if [ -n "$capture" ]
-  then
-    if [ "${forms: -1}" != "+" ]
-    then
+  if [ -n "$capture" ]; then
+    if [ "${forms: -1}" != "+" ]; then
       opts["$f"]="$capture"
       capture=""
     fi
@@ -105,13 +110,10 @@ __argue_capture_option() {
 }
 
 __argue_capture_positional() {
-  if [ -n "$arg" ]
-  then
-    if [ "${arg:0:1}" != "-" ]
-    then
+  if [ -n "$arg" ]; then
+    if [ "${arg:0:1}" != "-" ]; then
       positional[((a++))]="$arg"
-    elif [ "${#option_forms[@]}" != 0 ]
-    then
+    elif [ "${#option_forms[@]}" != 0 ]; then
       echo "unrecognized option: $arg" >&2 && return 1
     fi
   fi
