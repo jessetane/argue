@@ -2,7 +2,7 @@
 an argument and option parser for bash
 
 ## why
-`getopt(s)` doesn't do --long-form-args
+cos `getopt(s)` is a pita
 
 ## how
 sourceable shell script
@@ -27,6 +27,9 @@ argue "$*"\                     # first pass argv to argue
 echo "options: ${opts[@]}"      # access options in the $opts array
 echo "arguments: ${args[@]}"    # access positional args in the $args array
 ```
+
+## test
+`bash test.sh`
 
 ## inspiration
 loosely by [commander.c](https://github.com/visionmedia/commander.c)
