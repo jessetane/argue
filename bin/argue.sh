@@ -27,12 +27,13 @@ __argue_expand() {
   local arg
   local a=0
   local val
+  local assignment
   for arg in "${args[@]}"; do
+    unset assignment
     if echo "$arg" | grep -q "="; then
+      assignment="true"
       val="$(echo "$arg" | sed 's/[^=]*=//')"
       arg="$(echo "$arg" | sed 's/=.*//')"
-    else
-      val=""
     fi
     if echo "$arg" | grep -q "^-[^-]"; then
       for ((i=1; i<${#arg}; i++)); do
@@ -41,7 +42,7 @@ __argue_expand() {
     else
       expanded[((a++))]="$arg"
     fi
-    if [ -n "$val" ]; then
+    if [ -n "$assignment" ]; then
       expanded[((a++))]="$val"
     fi
   done
