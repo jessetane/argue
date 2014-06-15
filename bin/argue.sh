@@ -4,12 +4,10 @@
 #
 
 argue() {
-  local argv=("$@")
   local expanded=()
   local positional=()
-  local option_forms=("${argv[@]:1}")
+  local option_forms=("$@")
   
-  args=(${argv[0]})
   opts=() # ensure bash array is properly initialized
   
   # expand "-zxvf" style options to "-z -x -v -f"
@@ -28,7 +26,7 @@ __argue_expand() {
   local a=0
   local val
   local assignment
-  for arg in "${args[@]}"; do
+  for arg in "${argv[@]}"; do
     unset assignment
     if echo "$arg" | grep -q "="; then
       assignment="true"

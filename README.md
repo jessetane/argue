@@ -18,14 +18,13 @@ get `argue.sh` somewhere in your `PATH`
 #
 
 . argue.sh
-
-argue "$*"\                     # first pass argv to argue
-      "-v, --version"\          # specify options with comma separated lists of forms
+argv=("$@")                     # put args into an array 'argv'
+argue "-v, --version"\          # specify options with comma separated lists of forms
       "-f, --first-name, +"\    # specify options that capture a value by making the last form a "+"
       "-l, --last-name, +"
 
-echo "options: ${opts[@]}"      # access options in the $opts array
-echo "arguments: ${args[@]}"    # access positional args in the $args array
+echo "options (${#opts[@]}): ${opts[@]}"      # access options in the $opts array
+echo "arguments (${#args[@]}): ${args[@]}"    # access positional args in the $args array
 ```
 
 ## test
